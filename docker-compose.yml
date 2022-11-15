@@ -1,0 +1,26 @@
+#'docker-compose build' command will use this file
+#docker-compose syntax version
+version: '3.9'
+
+#services required for the application are defining below
+services:
+  #service name
+  app:
+    #build docker in current directory, . means use current directory
+    build: 
+      context: .
+      #creating a build argument called DEV and setting value as true. this is to not install dev 
+      #requiremnts to prod build
+      args:
+        - DEV=true
+    #port mapping, connect from localsystem port to docker container port
+    ports:
+      - "8000:8000"
+    #volume mapping, mapping directory from local system to docker container, 
+    #so changes will reflect real time instead of rebuilding container
+    #adding in local system will map to container and viceversa
+    volumes:
+      - ./app:/app
+    #default command used to run the service, we can override it while running docker-compose run
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
