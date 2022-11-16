@@ -1,4 +1,4 @@
---- #this specifies it is a yml file
+--- #this specifies it is a yaml file
 name: Checks
 
 on: [push] #will trigger after each github push
