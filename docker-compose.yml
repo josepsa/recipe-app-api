@@ -24,3 +24,22 @@ services:
     #default command used to run the service, we can override it while running docker-compose run
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+
+    environment:
+      - DB_HOST=db #db is name of the service which is defined below 
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+    depends_on:
+      - db #app service will wait till db service is up, app depends on db
+  db: #service name
+    image: postgres:13-alpine #image used from dockerhub to run this service
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data # /var/lib path is default path where postregres stores data,we 
+      #are mapping it with our local system
+    environment: #env variables for db configurations
+      - POSTGRES_DB=devdb
+      - POSTGRES_USER=devuser
+      - POSTGRES_PASSWORD=changeme
+volumes:
+  dev-db-data: #this will store to deafult location in our local filesystem which is /app

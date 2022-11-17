@@ -5,7 +5,7 @@
 #Base image which loads from docker hub
 FROM python:3.9-alpine3.13
 
-LABEL maintainer="sajan"
+LABEL maintainer="Sajan"
 
 #this will print python output to console
 ENV PYTHONUNBUFFERED 1
@@ -24,11 +24,20 @@ ARG DEV=false
 #if user is not created then it will run as root
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
+    #installing postgres-client dependecy inside alpine python alpine image inorder to install psycopg2
+    #which connects to postgres db from python.without this pip will throw error.
+    apk add --update --no-cache postgresql-client && \   
+    #installing dependenices for psycoph2 and storing them in .tmp to remove later.
+    #only postgres-client required for using psycopg2, so remaining dependenices are removing
+    apk add --update --no-cache --virtual .tmp-build-deps \
+        build-base postgresql-dev musl-dev && \
     /py/bin/pip install -r /tmp/requirements.txt && \
     if [ $DEV = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt ; \
     fi && \
     rm -rf /tmp && \
+    #removing temporary dependencies used to install psycopg2
+    apk del .tmp-build-deps && \
     adduser \
         --disabled-password \
         --no-create-home \
