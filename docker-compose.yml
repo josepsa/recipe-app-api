@@ -13,7 +13,8 @@ services:
       #requiremnts to prod build
       args:
         - DEV=true
-    #port mapping, connect from localsystem port to docker container port
+    #port mapping, connect from localsystem port to docker container port, first value is localhost port,
+    #second is container port
     ports:
       - "8000:8000"
     #volume mapping, mapping directory from local system to docker container, 
