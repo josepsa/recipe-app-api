@@ -14,12 +14,13 @@ class CommandTests(SimpleTestCase):
     def test_wait_for_db_ready(self,patched_check):
         patched_check.return_value=True # it is the mock value
         call_command('wait_for_db')
-        patched_check.assert_called_once_with(database=['default'])
+        patched_check.assert_called_once_with(databases=['default'])
 
-    def test_wait_for_db_delay(self,patched_check):
+    @patch('time.sleep')
+    def test_wait_for_db_delay(self,patched_sleep,patched_check):
         # first 2 times raise psycopg2error, next 3 times raise operational error
         # and after that raise success
-        patched_check.side_effect=[psycopg2Error] * 2 + [OperationalError] * 3 + [True]
+        patched_check.side_effect=[psycopg2Error] * 2  + [OperationalError] * 3 + [True]
         call_command('wait_for_db')
-        self.assertEqual(patched_check.call_count,6)
-        patched_check.assert_called_with(database=['default'])
+        self.assertEqual(patched_check.call_count, 6)
+        patched_check.assert_called_with(databases=['default'])
