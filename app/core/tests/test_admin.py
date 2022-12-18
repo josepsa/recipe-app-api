@@ -30,8 +30,14 @@ class AdminTests(TestCase):
         self.assertContains(res,self.user.email)
 
     def test_edit_user(self):
+        # it will pull below url, it is django built in url
         url=reverse('admin:core_user_change',args=[self.user.id])
         res=self.client.get(url)
 
+        self.assertEqual(res.status_code,200)
+
+    def test_create_user(self):
+        url=reverse('admin:core_user_add')
+        res=self.client.get(url)
         self.assertEqual(res.status_code,200)
         
